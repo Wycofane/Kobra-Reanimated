@@ -25,9 +25,11 @@ std::array<DBGameInfo, 1> GameBlackOps2::MultiPlayerOffsets =
 {{
     { 0xD4B340, 0xD4AF80, 0x2C22F80, 0 }
 }};
-// Black Ops 2 ZM
-std::array<DBGameInfo, 1> GameBlackOps2::ZombieModeOffsets =
+// Black Ops 2 ZM (entry 0: current 2026 Steam update, verified against running game;
+//                   entry 1: legacy pre-2026 build, kept as fallback)
+std::array<DBGameInfo, 2> GameBlackOps2::ZombieModeOffsets =
 {{
+    { 0xC87798, 0xC873D8, 0x2B43380, 0 },
     { 0xD41240, 0xD40E80, 0x2BF8880, 0 }
 }};
 
@@ -81,14 +83,15 @@ bool GameBlackOps2::LoadOffsets()
         }
 
         // Attempt to locate via heuristic searching
-        auto DBAssetsScan = CoDAssets::GameInstance->Scan("56 51 FF D2 8B F0 83 C4 04 85 F6");
+        // 2026 Steam update: the equivalent instruction sequence now uses ebx instead of esi (push ebx added)
+        auto DBAssetsScan = CoDAssets::GameInstance->Scan("53 51 FF D2 8B D8 83 C4 04 85 DB");
         auto StringTableScan = CoDAssets::GameInstance->Scan("33 C9 66 89 0C 10 83 C0 02 83 F8 20");
 
         // Check that we had hits
         if (DBAssetsScan > 0 && StringTableScan > 0)
         {
             // Load info and verify
-            auto GameOffsets = DBGameInfo(CoDAssets::GameInstance->Read<uint32_t>(DBAssetsScan - 0xB), CoDAssets::GameInstance->Read<uint32_t>(DBAssetsScan + 0x3B), CoDAssets::GameInstance->Read<uint32_t>(StringTableScan - 0x2E), 0);
+            auto GameOffsets = DBGameInfo(CoDAssets::GameInstance->Read<uint32_t>(DBAssetsScan - 0xB), CoDAssets::GameInstance->Read<uint32_t>(DBAssetsScan + 0x28), CoDAssets::GameInstance->Read<uint32_t>(StringTableScan - 0x2E), 0);
             // Read required offsets (XANIM, XMODEL, XFX, ???, Map)
             CoDAssets::GameOffsetInfos.emplace_back(CoDAssets::GameInstance->Read<uint32_t>(GameOffsets.DBAssetPools + (4 * 4)));
             CoDAssets::GameOffsetInfos.emplace_back(CoDAssets::GameInstance->Read<uint32_t>(GameOffsets.DBAssetPools + (4 * 5)));

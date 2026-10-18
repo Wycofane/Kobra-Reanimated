@@ -351,8 +351,11 @@ std::string ProcessReader::ReadNullTerminatedString(uintptr_t Offset)
         // Keep a buffer, and null it, most strings won't be larger than this
         char Buffer[32];
         std::memset(Buffer, 0, sizeof(Buffer));
+        // Sanity cap: garbage pointers (e.g. unused pool slots must be skipped fast)
+        // must never turn into multi-second endless reads
+        constexpr size_t MaxStringLength = 8192;
 
-        while (true)
+        while (Result.size() < MaxStringLength)
         {
             // Read a buffer from the memory instead of 1 char at a time
             auto size = Read((uint8_t*)&Buffer, Address, sizeof(Buffer));

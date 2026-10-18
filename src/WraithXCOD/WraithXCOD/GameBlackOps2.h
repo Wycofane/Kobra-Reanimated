@@ -46,7 +46,7 @@ private:
     // A list of offsets for Black Ops 2 multi player
     static std::array<DBGameInfo, 1> MultiPlayerOffsets;
     // A list of offsets for Black Ops 2 zombie mode
-    static std::array<DBGameInfo, 1> ZombieModeOffsets;
+    static std::array<DBGameInfo, 2> ZombieModeOffsets;
 
     // -- Game utilities
 
