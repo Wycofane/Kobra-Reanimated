@@ -24,7 +24,8 @@ Every value was validated against the running game (asset pools live-check, `def
 
 ### Using a patched binary without building?
 
-If you downloaded the official Kobra.exe release and don't want to compile, `tools/patch_kobra.py` applies the same two byte-level changes to your local copy — with an SHA-256 safety gate that refuses any other build:
+If you downloaded the official Kobra.exe release and don't want to compile, **grab the ready-made
+`Kobra-Reanimated.exe` from the [Releases](https://github.com/Wycofane/Kobra-Reanimated/releases)** (SHA-256-verified, GPL-3.0, byte-identical to what `tools/patch_kobra.py` produces) — or apply the same two byte-level changes to your local copy yourself, with an SHA-256 safety gate that refuses any other build:
 
 ```powershell
 python tools/patch_kobra.py              # patches .\Kobra.exe -> Kobra-patched.exe
